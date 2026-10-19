@@ -1,0 +1,8 @@
+# Prevent Bob's tools from reading or editing secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+# This is not a sandbox: also keep risky commands under human approval.

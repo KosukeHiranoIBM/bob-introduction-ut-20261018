@@ -1,0 +1,10 @@
+# Runtime API secrets (do not commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+node_modules/
+dist/
+.next/

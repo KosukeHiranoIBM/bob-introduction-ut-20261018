@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔬 小学校 科学クイズ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #293548;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --correct: #4ade80;
+      --wrong: #f87171;
+      --btn-hover: #0ea5e9;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic Pro", "Meiryo", "BIZ UDPGothic", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* ---- progress bar ---- */
+    #progress-bar-wrap {
+      width: 100%;
+      max-width: 640px;
+      background: var(--border);
+      border-radius: 99px;
+      height: 8px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+    #progress-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: right;
+      width: 100%;
+      max-width: 640px;
+      margin-bottom: 16px;
+    }
+
+    /* ---- card ---- */
+    #card {
+      width: 100%;
+      max-width: 640px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+
+    #category-badge {
+      display: inline-block;
+      background: #1e3a5f;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 14px;
+      letter-spacing: 0.06em;
+    }
+
+    #question-text {
+      font-size: clamp(1.1rem, 3vw, 1.45rem);
+      font-weight: 700;
+      line-height: 1.55;
+      margin-bottom: 28px;
+      min-height: 3em;
+    }
+
+    #choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .choice-btn {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+      font-weight: 600;
+      padding: 16px 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      line-height: 1.4;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #1e3a5f;
+      transform: translateY(-2px);
+    }
+    .choice-btn.correct {
+      border-color: var(--correct);
+      background: #14532d;
+      color: var(--correct);
+    }
+    .choice-btn.wrong {
+      border-color: var(--wrong);
+      background: #450a0a;
+      color: var(--wrong);
+    }
+    .choice-btn:disabled { cursor: default; transform: none; }
+
+    /* ---- feedback ---- */
+    #feedback {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      display: none;
+    }
+    #feedback.correct {
+      background: #14532d;
+      border: 1px solid var(--correct);
+      color: var(--correct);
+      display: block;
+    }
+    #feedback.wrong {
+      background: #450a0a;
+      border: 1px solid var(--wrong);
+      color: var(--wrong);
+      display: block;
+    }
+
+    #explanation {
+      margin-top: 10px;
+      color: #cbd5e1;
+      font-size: 0.88rem;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* ---- next button ---- */
+    #next-btn {
+      display: none;
+      margin-top: 22px;
+      width: 100%;
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      padding: 16px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    #next-btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
+
+    /* ---- score bar ---- */
+    #score-bar {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      max-width: 640px;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .score-item { text-align: center; }
+    .score-item .val {
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+    .score-item .lbl {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .score-sep { color: var(--border); font-size: 1.4rem; }
+    #correct-val { color: var(--correct); }
+    #wrong-val { color: var(--wrong); }
+
+    /* ---- result screen ---- */
+    #result-screen {
+      display: none;
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+    #result-screen h2 { font-size: 2rem; margin-bottom: 8px; }
+    #result-score { font-size: clamp(3rem, 10vw, 4.5rem); font-weight: 900; color: var(--accent); }
+    #result-total { color: var(--muted); font-size: 1rem; margin-bottom: 24px; }
+    #result-msg { font-size: 1.15rem; margin-bottom: 28px; line-height: 1.6; }
+    #restart-btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      padding: 16px 40px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #restart-btn:hover { background: var(--btn-hover); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🔬 小学校 科学クイズ</h1>
+  <p>ぜんぶで 10問 ― 正しい答えをえらぼう！</p>
+</header>
+
+<div id="progress-bar-wrap"><div id="progress-bar" style="width:0%"></div></div>
+<div id="progress-label">1 / 10</div>
+
+<div id="card">
+  <div id="category-badge">カテゴリ</div>
+  <div id="question-text">問題が読み込まれます</div>
+  <div id="choices"></div>
+  <div id="feedback"><span id="feedback-title"></span><div id="explanation"></div></div>
+  <button id="next-btn">つぎの問題 →</button>
+</div>
+
+<div id="score-bar">
+  <div class="score-item">
+    <div class="val" id="correct-val">0</div>
+    <div class="lbl">⭕ 正解</div>
+  </div>
+  <div class="score-sep">|</div>
+  <div class="score-item">
+    <div class="val" id="wrong-val">0</div>
+    <div class="lbl">❌ 不正解</div>
+  </div>
+  <div class="score-sep">|</div>
+  <div class="score-item">
+    <div class="val" id="remain-val">10</div>
+    <div class="lbl">残り問題</div>
+  </div>
+</div>
+
+<div id="result-screen">
+  <h2>🎉 クイズ終了！</h2>
+  <div id="result-score"></div>
+  <div id="result-total">10問中</div>
+  <div id="result-msg"></div>
+  <button id="restart-btn" onclick="startQuiz()">もう一度あそぶ 🔄</button>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    category: "植物・生き物",
+    text: "植物が光を使って栄養を作るはたらきを何という？",
+    choices: ["光合成", "呼吸", "蒸散", "発芽"],
+    answer: 0,
+    explanation: "植物は光のエネルギーを使って、水と二酸化炭素からデンプン（栄養）と酸素を作ります。これを「光合成」といいます。"
+  },
+  {
+    category: "天気・気象",
+    text: "雨が降った後、空に虹が見えるのはなぜ？",
+    choices: ["空気が光る", "水の粒が光を分ける", "雲が発光する", "太陽が近づく"],
+    answer: 1,
+    explanation: "空気中に残った小さな水の粒（水滴）に光が当たると、光がさまざまな色に分かれて虹に見えます。"
+  },
+  {
+    category: "太陽・宇宙",
+    text: "地球が１回自転するのにかかる時間はどれくらい？",
+    choices: ["約1時間", "約12時間", "約24時間", "約1年"],
+    answer: 2,
+    explanation: "地球は約24時間（１日）で１回転します。これが昼と夜が生まれる理由です。"
+  },
+  {
+    category: "水・物質",
+    text: "水が凍って氷になるのは何度以下のとき？（標準気圧）",
+    choices: ["4℃", "0℃", "10℃", "−10℃"],
+    answer: 1,
+    explanation: "水は0℃以下になると氷に変わります。これを「凝固」といい、0℃が「凝固点」です。"
+  },
+  {
+    category: "電気・磁石",
+    text: "電磁石は何を流すと磁石のはたらきをする？",
+    choices: ["水", "電気（電流）", "空気", "熱"],
+    answer: 1,
+    explanation: "コイルに電流を流すと磁場が生まれ、磁石と同じはたらきをします。電流を切ると磁力も消えます。"
+  },
+  {
+    category: "植物・生き物",
+    text: "メダカのたまごの中で最初に動き始めるのはどれ？",
+    choices: ["足", "目", "心臓", "えら"],
+    answer: 2,
+    explanation: "メダカのたまごでは、心臓が最初に動き始めます。体ができる前から心臓が血液を送るのが観察できます。"
+  },
+  {
+    category: "太陽・宇宙",
+    text: "月が自ら光らない理由は何？",
+    choices: ["月が暗いから", "月に電気がないから", "月は太陽の光を反射しているだけだから", "月が遠いから"],
+    answer: 2,
+    explanation: "月は自分では光を出しません。太陽の光を反射して光って見えます。だから月の形が変わって見えます（月の満ち欠け）。"
+  },
+  {
+    category: "水・物質",
+    text: "食塩水を蒸発させると何が残る？",
+    choices: ["水だけ", "塩だけ", "何も残らない", "食塩水がそのまま残る"],
+    answer: 1,
+    explanation: "水は蒸発して空気中に逃げますが、塩（食塩）は蒸発しないのでそのまま残ります。"
+  },
+  {
+    category: "電気・磁石",
+    text: "乾電池を２つ直列につなぐとどうなる？",
+    choices: ["豆電球が暗くなる", "豆電球が明るくなる", "電球が消える", "電池が長持ちになる"],
+    answer: 1,
+    explanation: "直列つなぎにすると電圧が上がり、電流が増えるので豆電球はより明るく光ります。"
+  },
+  {
+    category: "天気・気象",
+    text: "台風の中心付近にある静かな部分を何という？",
+    choices: ["台風の頭", "台風の目", "台風の核", "台風の芯"],
+    answer: 1,
+    explanation: "台風の中心にある風が弱く晴れた部分を「台風の目」といいます。目の周りには強い風と雨があります。"
+  }
+];
+
+let questions = [];
+let current = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  questions = shuffle(QUESTIONS);
+  current = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  answered = false;
+
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('card').style.display = 'block';
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  document.getElementById('progress-label').style.display = 'block';
+  document.getElementById('score-bar').style.display = 'flex';
+
+  updateScoreBar();
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[current];
+
+  document.getElementById('category-badge').textContent = q.category;
+  document.getElementById('question-text').textContent = `Q${current + 1}. ${q.text}`;
+
+  // progress
+  const pct = (current / questions.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${current + 1} / ${questions.length}`;
+
+  // shuffle choices with mapping
+  const indices = shuffle([0, 1, 2, 3]);
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  indices.forEach(idx => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = q.choices[idx];
+    btn.dataset.idx = idx;
+    btn.addEventListener('click', () => selectAnswer(idx, btn));
+    choicesEl.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = '';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('feedback-title').textContent = '';
+  document.getElementById('explanation').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function selectAnswer(selectedIdx, clickedBtn) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[current];
+  const isCorrect = selectedIdx === q.answer;
+
+  // highlight buttons
+  document.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.disabled = true;
+    if (parseInt(btn.dataset.idx) === q.answer) {
+      btn.classList.add('correct');
+    }
+  });
+  if (!isCorrect) {
+    clickedBtn.classList.add('wrong');
+  }
+
+  // feedback
+  const fb = document.getElementById('feedback');
+  fb.className = isCorrect ? 'correct' : 'wrong';
+  fb.style.display = 'block';
+  document.getElementById('feedback-title').textContent = isCorrect ? '⭕ 正解！すごい！' : '❌ 残念…';
+  document.getElementById('explanation').textContent = q.explanation;
+
+  if (isCorrect) correctCount++;
+  else wrongCount++;
+
+  updateScoreBar();
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function updateScoreBar() {
+  document.getElementById('correct-val').textContent = correctCount;
+  document.getElementById('wrong-val').textContent = wrongCount;
+  document.getElementById('remain-val').textContent = questions.length - current;
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    showQuestion();
+    updateScoreBar();
+  }
+});
+
+function showResult() {
+  document.getElementById('card').style.display = 'none';
+  document.getElementById('progress-bar-wrap').style.display = 'none';
+  document.getElementById('progress-label').style.display = 'none';
+  document.getElementById('score-bar').style.display = 'none';
+
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  document.getElementById('result-score').textContent = `${correctCount}問`;
+  document.getElementById('result-total').textContent = `${questions.length}問中 正解`;
+
+  let msg = '';
+  const pct = correctCount / questions.length;
+  if (pct === 1)       msg = '🏆 パーフェクト！全問正解はすごい！';
+  else if (pct >= 0.8) msg = '🌟 とてもよくできました！もう一度やってみよう！';
+  else if (pct >= 0.5) msg = '👍 なかなかよくできました！もっとできるよ！';
+  else                  msg = '📚 もう一度やってみよう！きっと良くなるよ！';
+  document.getElementById('result-msg').textContent = msg;
+}
+
+// start!
+startQuiz();
+</script>
+</body>
+</html>

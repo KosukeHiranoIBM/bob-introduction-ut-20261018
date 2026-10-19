@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 一般常識クイズ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f172a;
+      --surface:  #1e293b;
+      --card:     #263148;
+      --border:   #334155;
+      --text:     #f1f5f9;
+      --muted:    #94a3b8;
+      --accent:   #38bdf8;
+      --correct:  #22c55e;
+      --wrong:    #f43f5e;
+      --btn-bg:   #38bdf8;
+      --btn-text: #0f172a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .subtitle { font-size: 0.9rem; color: var(--muted); text-align: center; margin-bottom: 28px; }
+
+    /* ── Progress ── */
+    .progress-bar-wrap {
+      width: 100%; max-width: 600px;
+      background: var(--border);
+      border-radius: 999px;
+      height: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .question-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .choices { display: flex; flex-direction: column; gap: 12px; }
+
+    .choice-btn {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: var(--text);
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      line-height: 1.4;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #1e3a50;
+      transform: translateX(4px);
+    }
+    .choice-btn.correct {
+      border-color: var(--correct);
+      background: #14532d55;
+      color: #bbf7d0;
+    }
+    .choice-btn.wrong {
+      border-color: var(--wrong);
+      background: #4c071855;
+      color: #fecdd3;
+    }
+    .choice-btn:disabled { cursor: default; transform: none; }
+
+    /* ── Feedback ── */
+    .feedback {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct-fb { background: #14532d55; border-left: 4px solid var(--correct); color: #bbf7d0; }
+    .feedback.wrong-fb   { background: #4c071855; border-left: 4px solid var(--wrong);   color: #fecdd3; }
+
+    /* ── Next button ── */
+    .next-btn {
+      margin-top: 22px;
+      display: none;
+      width: 100%;
+      padding: 14px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .next-btn:hover { opacity: 0.85; }
+    .next-btn.show { display: block; }
+
+    /* ── Score screen ── */
+    .score-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 28px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+    .score-screen.show { display: flex; }
+    .score-big {
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--accent);
+    }
+    .score-label { font-size: 0.9rem; color: var(--muted); }
+    .score-msg { font-size: 1.1rem; font-weight: 600; }
+
+    .retry-btn {
+      padding: 14px 36px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .retry-btn:hover { opacity: 0.85; }
+
+    /* ── Start screen ── */
+    .start-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 28px;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+    .start-screen.hidden { display: none; }
+    .start-icon { font-size: 3.5rem; }
+    .start-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 400px; }
+    .start-btn {
+      margin-top: 8px;
+      padding: 14px 48px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .start-btn:hover { opacity: 0.85; }
+
+    .quiz-area { display: none; width: 100%; max-width: 600px; }
+    .quiz-area.show { display: block; }
+  </style>
+</head>
+<body>
+
+  <h1>🤖 AI 一般常識クイズ</h1>
+  <p class="subtitle">AIに関する知識を10問でチェック！</p>
+
+  <!-- Start -->
+  <div class="start-screen" id="startScreen">
+    <div class="start-icon">🧠</div>
+    <p class="score-msg">AIの基礎知識に挑戦しよう</p>
+    <p class="start-desc">機械学習・深層学習・大規模言語モデルなどAIの一般常識を問う10問です。4択で答えてください。</p>
+    <button class="start-btn" onclick="startQuiz()">クイズを始める</button>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz-area" id="quizArea">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-label" id="progressLabel"></div>
+
+    <div class="card">
+      <div class="question-number" id="questionNumber"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題 →</button>
+    </div>
+  </div>
+
+  <!-- Score -->
+  <div class="score-screen" id="scoreScreen">
+    <div class="score-big" id="scoreBig"></div>
+    <div class="score-label">/ 10問正解</div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="retry-btn" onclick="restartQuiz()">もう一度挑戦する</button>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "機械学習の一手法で、人間の脳神経回路の仕組みを模倣したモデルを何と呼ぶか？",
+    choices: ["決定木", "ニューラルネットワーク", "サポートベクターマシン", "回帰分析"],
+    answer: 1,
+    explanation: "ニューラルネットワークは、ニューロン（神経細胞）の結合を数学的にモデル化したものです。深層学習（ディープラーニング）はその多層構造版です。"
+  },
+  {
+    q: "2017年にGoogleが発表し、現代の大規模言語モデル（LLM）の基盤となったアーキテクチャの名前は？",
+    choices: ["CNN（畳み込みニューラルネット）", "RNN（再帰型ニューラルネット）", "Transformer", "GAN（敵対的生成ネットワーク）"],
+    answer: 2,
+    explanation: "「Attention Is All You Need」という論文で発表されたTransformerは、自己注意機構（Self-Attention）を中心としたアーキテクチャで、GPT・BERTなどLLMの基礎となっています。"
+  },
+  {
+    q: "「過学習（Overfitting）」とはどのような状態か？",
+    choices: [
+      "訓練データに適合しすぎ、未知のデータに対する汎化性能が低い状態",
+      "学習データが足りず、モデルが訓練データすら正確に予測できない状態",
+      "計算コストが高すぎてモデルが収束しない状態",
+      "ラベルが誤っているデータが多く学習が失敗する状態"
+    ],
+    answer: 0,
+    explanation: "過学習は訓練データのノイズや細部まで学習しすぎた状態です。正則化・ドロップアウト・データ拡張などで防ぎます。逆の状態は「未学習（Underfitting）」と呼びます。"
+  },
+  {
+    q: "教師なし学習の代表的な手法として、データを自動的にいくつかのグループに分けるアルゴリズムは何か？",
+    choices: ["線形回帰", "ロジスティック回帰", "クラスタリング", "強化学習"],
+    answer: 2,
+    explanation: "クラスタリング（例：k-means法）はラベルなしデータを類似度に基づいてグループ（クラスタ）に分ける教師なし学習手法です。"
+  },
+  {
+    q: "GPT・Gemini・Claude などの大規模言語モデルで使われる「トークン」とは何か？",
+    choices: [
+      "認証に使うアクセスキーの単位",
+      "モデルがテキストを処理する最小の単位（単語や文字のかたまり）",
+      "GPUの処理単位",
+      "学習に使うデータセットのバッチサイズ"
+    ],
+    answer: 1,
+    explanation: "トークンはLLMがテキストを分割する最小単位です。英語では概ね1単語≈1〜2トークン、日本語では1文字〜2文字程度が1トークンに対応します。APIの料金もトークン数で計算されます。"
+  },
+  {
+    q: "画像生成AIの代表例として「Stable Diffusion」や「DALL·E」が挙げられるが、これらに用いられる主な技術は？",
+    choices: ["強化学習", "拡散モデル（Diffusion Model）", "決定木アンサンブル", "隠れマルコフモデル"],
+    answer: 1,
+    explanation: "これらの画像生成AIは拡散モデルを採用しています。ランダムノイズから少しずつ情報を「除去」することで、テキストプロンプトに合う画像を生成します。"
+  },
+  {
+    q: "チューリングテストとは何か？",
+    choices: [
+      "AIのプログラムコードを自動採点するテスト",
+      "コンピュータが人間と区別できない知的応答ができるかを判定するテスト",
+      "ニューラルネットワークの精度を測るベンチマーク",
+      "自動運転車の安全性を測定する評価方法"
+    ],
+    answer: 1,
+    explanation: "1950年にアラン・チューリングが提案。人間の審判員が会話だけでコンピュータか人間かを区別できなければ、そのコンピュータは知的と見なせるという考え方です。"
+  },
+  {
+    q: "強化学習（Reinforcement Learning）における「報酬（Reward）」の役割は？",
+    choices: [
+      "モデルが誤った予測をしたときに損失を計算するための値",
+      "エージェントが環境から受け取る、行動の良し悪しを示すシグナル",
+      "訓練データのラベルとして付与される正解値",
+      "ニューラルネットワークの重みを初期化するための係数"
+    ],
+    answer: 1,
+    explanation: "強化学習ではエージェントが環境と相互作用し、各行動に対して報酬（プラス）またはペナルティ（マイナス）を受け取ります。累積報酬を最大化するように方策（Policy）を学習します。"
+  },
+  {
+    q: "「ハルシネーション（Hallucination）」とは、AIの文脈でどういう現象を指すか？",
+    choices: [
+      "AIが同じ回答を繰り返し出力すること",
+      "AIが実際には存在しない情報・事実を自信を持って生成すること",
+      "AIの学習データに偏りがあること",
+      "AIが人間の感情を模倣すること"
+    ],
+    answer: 1,
+    explanation: "LLMがもっともらしく見えるが実際には誤った情報（存在しない論文・人物・事実）を生成する現象をハルシネーションと呼びます。RAGやファクトチェックで緩和が試みられています。"
+  },
+  {
+    q: "AIの「バイアス（Bias）」問題とは何か？",
+    choices: [
+      "モデルの計算精度が低いこと",
+      "学習データの偏りなどによって、モデルが特定グループに不公平な予測をすること",
+      "訓練データのサイズが小さすぎること",
+      "AIが意図的に嘘をついて人を誤導すること"
+    ],
+    answer: 1,
+    explanation: "学習データが持つ社会的偏見・統計的偏りがモデルに反映され、性別・人種・地域などで不公平な予測が出ることをAIバイアスと呼びます。公平性（Fairness）の研究が進んでいます。"
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+// 各問でシャッフルした選択肢インデックスを保持
+let shuffledOrder = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.add('show');
+  current = 0;
+  score = 0;
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = QUESTIONS[current];
+  shuffledOrder = shuffle([0, 1, 2, 3]);
+
+  document.getElementById('questionNumber').textContent = `問 ${current + 1} / ${QUESTIONS.length}`;
+  document.getElementById('questionText').textContent = q.q;
+
+  const progressPct = (current / QUESTIONS.length) * 100;
+  document.getElementById('progressBar').style.width = progressPct + '%';
+  document.getElementById('progressLabel').textContent = `${current} / ${QUESTIONS.length} 問完了`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  shuffledOrder.forEach((origIdx, displayIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = `${['A', 'B', 'C', 'D'][displayIdx]}. ${q.choices[origIdx]}`;
+    btn.dataset.origIdx = origIdx;
+    btn.addEventListener('click', () => selectChoice(btn, origIdx));
+    choicesEl.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.className = 'next-btn';
+  nextBtn.textContent = current < QUESTIONS.length - 1 ? '次の問題 →' : '結果を見る';
+}
+
+function selectChoice(btn, origIdx) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[current];
+  const allBtns = document.querySelectorAll('.choice-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (parseInt(b.dataset.origIdx) === q.answer) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (origIdx === q.answer) {
+    score++;
+    btn.classList.add('correct');
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `✅ <strong>正解！</strong>　${q.explanation}`;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `❌ <strong>不正解。</strong>　${q.explanation}`;
+  }
+
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current < QUESTIONS.length) {
+    loadQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function showScore() {
+  document.getElementById('quizArea').classList.remove('show');
+  const ss = document.getElementById('scoreScreen');
+  ss.classList.add('show');
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('scoreBig').textContent = score;
+  let msg = '';
+  if (score === 10)      msg = '🏆 パーフェクト！AI マスターです！';
+  else if (score >= 8)   msg = '🎉 素晴らしい！AI の知識は十分あります';
+  else if (score >= 6)   msg = '👍 まずまず。あと少しで上級者！';
+  else if (score >= 4)   msg = '📚 基礎をもう少し復習してみましょう';
+  else                   msg = '🌱 AIの世界はこれから！一緒に学びましょう';
+  document.getElementById('scoreMsg').textContent = msg;
+}
+
+function restartQuiz() {
+  document.getElementById('scoreScreen').classList.remove('show');
+  document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('startScreen').classList.remove('show');
+  current = 0; score = 0;
+}
+</script>
+</body>
+</html>

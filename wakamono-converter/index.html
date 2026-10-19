@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>若者言葉コンバーター</title>
+<style>
+  :root { --bg:#14102b; --card:#1f1a42; --ink:#fff; --muted:#b9b3e6; --pink:#ff3d9a; --lime:#c6ff3d; --line:#3a3270; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"Hiragino Sans","Noto Sans JP",system-ui,sans-serif; display:flex; justify-content:center; padding:32px 16px; }
+  main { width:100%; max-width:860px; }
+  h1 { font-size:clamp(32px,6vw,56px); margin:0 0 4px; letter-spacing:.02em; }
+  h1 span { color:var(--lime); }
+  .sub { color:var(--muted); font-size:18px; margin:0 0 24px; }
+  .badge { display:inline-block; font-size:14px; border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:2px 12px; margin-bottom:16px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; }
+  input[type=text] { flex:1 1 320px; font-size:28px; padding:16px 20px; border-radius:16px; border:3px solid var(--line);
+    background:var(--card); color:var(--ink); outline:none; }
+  input[type=text]:focus { border-color:var(--lime); }
+  button { font-size:24px; font-weight:700; padding:16px 28px; border:0; border-radius:16px; cursor:pointer; }
+  button:focus-visible { outline:3px solid var(--lime); outline-offset:2px; }
+  #go { background:var(--pink); color:#fff; }
+  #go:hover { filter:brightness(1.1); }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 28px; align-items:center; color:var(--muted); font-size:16px; }
+  .chip { font-size:16px; font-weight:500; padding:6px 14px; background:transparent; color:var(--ink); border:1px solid var(--line); border-radius:999px; }
+  .chip:hover { border-color:var(--lime); }
+  .result { background:var(--card); border:3px solid var(--line); border-radius:24px; padding:28px; min-height:180px; }
+  .label { color:var(--muted); font-size:16px; margin-bottom:8px; }
+  .out { font-size:clamp(30px,5vw,48px); font-weight:800; line-height:1.4; word-break:break-all; min-height:1.4em; }
+  .out mark { background:none; color:var(--lime); }
+  .note { margin-top:10px; color:var(--muted); font-size:15px; }
+  .actions { margin-top:20px; display:flex; gap:12px; flex-wrap:wrap; }
+  .actions button { font-size:18px; padding:10px 20px; background:var(--lime); color:#14102b; }
+  .actions button.ghost { background:transparent; color:var(--ink); border:2px solid var(--line); }
+  footer { margin-top:24px; color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>若者言葉<span>コンバーター</span></h1>
+  <p class="sub">言葉や短い文を入れて、ボタンを押すだけ。</p>
+  <span class="badge">ルールベース変換（AI・外部通信なし）</span>
+
+  <div class="row">
+    <input id="in" type="text" maxlength="60" placeholder="例：本当にありがとうございます" aria-label="変換したい言葉" autocomplete="off">
+    <button id="go" type="button">若者言葉にする</button>
+  </div>
+  <div class="chips">
+    <span>お試し：</span>
+    <button class="chip" type="button">本当にありがとうございます</button>
+    <button class="chip" type="button">このラーメンはとても美味しい</button>
+    <button class="chip" type="button">疲れたけど頑張る</button>
+    <button class="chip" type="button">友達の彼女がかわいい</button>
+  </div>
+
+  <section class="result" aria-live="polite">
+    <div class="label" id="label">変換結果</div>
+    <div class="out" id="out">ここに結果が出ます</div>
+    <div class="note" id="note"></div>
+    <div class="actions" id="actions" hidden>
+      <button id="again" type="button">別パターンで変換</button>
+      <button id="copy" class="ghost" type="button">コピー</button>
+    </div>
+  </section>
+
+  <footer>入力した内容は端末内で処理され、送信・保存されません。辞書にない言葉は簡易テンプレートで装飾します。</footer>
+</main>
+<script src="slang.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

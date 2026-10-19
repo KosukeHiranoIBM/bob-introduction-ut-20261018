@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 IBM Bobでできること！ — 展示会インタラクティブガイド</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+    }
+    .dark-glass-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-indigo-900/60 bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <i data-lucide="bot" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 via-indigo-200 to-purple-300 bg-clip-text text-transparent">
+            IBM Bob 展示会デモガイド
+          </h1>
+          <p class="text-xs text-indigo-300/80">あなたの隣にいる、超優秀なAIエンジニア相棒</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="px-3 py-1 text-xs rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 animate-pulse">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> ブースで実演中！
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-6xl mx-auto px-6 py-10 space-y-12">
+    <section class="text-center space-y-4">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-sm font-medium">
+        <i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i>
+        「言葉」を「動くソフトウェア」にその場で変換
+      </div>
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+        Bobに話しかけるだけで、<br class="hidden sm:inline" />
+        <span class="bg-gradient-to-r from-blue-400 via-teal-300 to-indigo-300 bg-clip-text text-transparent">
+          目の前でアプリが生まれ、進化する！
+        </span>
+      </h2>
+      <p class="text-slate-300 text-lg max-w-2xl mx-auto">
+        プログラミングの知識は一切不要。思いついたアイデアを伝えるだけで、Bobが自律的にコードを書き、テストし、動かします。
+      </p>
+    </section>
+
+    <!-- 5 Core Capabilities Cards -->
+    <section class="space-y-6">
+      <div class="flex items-center gap-2">
+        <i data-lucide="zap" class="w-6 h-6 text-amber-400"></i>
+        <h3 class="text-2xl font-bold text-white">Bobのすご技 5大パワー！</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Card 1 -->
+        <div class="dark-glass-card rounded-2xl p-6 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 group">
+          <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+            <i data-lucide="rocket" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+            1. ゼロからアプリ爆速作成
+            <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">数秒〜数十秒</span>
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            「家計簿作って」「囲碁ゲーム作って」と伝えるだけで、画面デザインから裏側の計算処理まで即座に完成！
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="dark-glass-card rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1 group">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+            <i data-lucide="palette" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+            2. 会話しながらアプリを進化
+            <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">即時反映</span>
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            「ダークモードにして」「盤面を木目調に」「円グラフを追加して」など、追加のワガママもリアルタイムに反映！
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="dark-glass-card rounded-2xl p-6 hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-1 group">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+            3. 自律的なエラー修正・テスト
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">自己修復</span>
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            ただコードを出すだけでなく、自分でテストしてエラーを発見。自律的に原因を突き止めて修正まで完結！
+          </p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="dark-glass-card rounded-2xl p-6 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1 group">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-4 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+            <i data-lucide="folder-search" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+            4. プロジェクト全体の丸ごと理解
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">深層解析</span>
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            数千行・数百ファイルの巨大プロジェクトも一瞬でスキャン。「この機能のバグはどこ？」に即答します。
+          </p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="dark-glass-card rounded-2xl p-6 hover:border-pink-500/50 transition-all duration-300 hover:-translate-y-1 group">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center mb-4 group-hover:bg-pink-500 group-hover:text-white transition-colors">
+            <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+            5. Office & 図解ドキュメント生成
+            <span class="text-xs px-2 py-0.5 rounded bg-pink-500/20 text-pink-300">Office連携</span>
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Word、Excel、PowerPointの直接編集や、Mermaid構成図・仕様書の作成まで幅広くサポートします。
+          </p>
+        </div>
+
+        <!-- Card 6 (Special) -->
+        <div class="dark-glass-card rounded-2xl p-6 border-indigo-500/40 bg-gradient-to-br from-indigo-950/60 to-purple-950/40 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-indigo-300 font-bold mb-2">
+              <i data-lucide="cpu" class="w-5 h-5 text-indigo-400"></i>
+              3つのモードを搭載
+            </div>
+            <ul class="text-xs text-slate-300 space-y-1.5">
+              <li><strong class="text-blue-300">🚀 Agent:</strong> 全自動で開発・実行</li>
+              <li><strong class="text-purple-300">📋 Plan:</strong> じっくり設計・仕様検討</li>
+              <li><strong class="text-emerald-300">💡 Ask:</strong> 質問への丁寧な解説</li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-700/50 text-xs text-slate-400">
+            状況に合わせて最適な頭脳に切り替わります。
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Interactive Prompt Trial Section -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="message-square-code" class="w-6 h-6 text-indigo-400"></i>
+          <h3 class="text-2xl font-bold text-white">ブースで試せる「魔法のひと言」</h3>
+        </div>
+        <span class="text-xs text-slate-400">クリックしてコピーできます</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Prompt 1 -->
+        <div class="dark-glass-card p-5 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition group cursor-pointer" onclick="copyPrompt('9路盤で遊べる囲碁ゲームを作って！石が置けて、相手と交互に打てるようにして')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-blue-500/20 text-blue-300 flex items-center gap-1.5">
+              🎮 ゲーム作成
+            </span>
+            <span class="text-xs text-slate-400 group-hover:text-indigo-300 flex items-center gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピー
+            </span>
+          </div>
+          <p class="text-sm font-medium text-white mb-2">
+            「9路盤で遊べる囲碁ゲームを作って！石が置けて、相手と交互に打てるようにして」
+          </p>
+          <p class="text-xs text-indigo-300/80">
+            ✨ 追加の指示: 「盤面を木目調にして！」「取った石の数を表示して！」
+          </p>
+        </div>
+
+        <!-- Prompt 2 -->
+        <div class="dark-glass-card p-5 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition group cursor-pointer" onclick="copyPrompt('今月の支出がパッとわかる、オシャレな家計簿アプリを作って！グラフつきで！')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 flex items-center gap-1.5">
+              📊 ダッシュボード
+            </span>
+            <span class="text-xs text-slate-400 group-hover:text-indigo-300 flex items-center gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピー
+            </span>
+          </div>
+          <p class="text-sm font-medium text-white mb-2">
+            「今月の支出がパッとわかる、オシャレな家計簿アプリを作って！グラフつきで！」
+          </p>
+          <p class="text-xs text-emerald-300/80">
+            ✨ 追加の指示: 「円グラフを棒グラフに切り替えて！」「予算警告アラートを出して！」
+          </p>
+        </div>
+
+        <!-- Prompt 3 -->
+        <div class="dark-glass-card p-5 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition group cursor-pointer" onclick="copyPrompt('ツンデレなAIアシスタントと会話できる、可愛いチャットアプリを作って！')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-pink-500/20 text-pink-300 flex items-center gap-1.5">
+              🤖 AIキャラクター対話
+            </span>
+            <span class="text-xs text-slate-400 group-hover:text-indigo-300 flex items-center gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピー
+            </span>
+          </div>
+          <p class="text-sm font-medium text-white mb-2">
+            「ツンデレなAIアシスタントと会話できる、可愛いチャットアプリを作って！」
+          </p>
+          <p class="text-xs text-pink-300/80">
+            ✨ 追加の指示: 「返信に合わせて表情アイコンを変えて！」「メッセージを吹き出しにして！」
+          </p>
+        </div>
+
+        <!-- Prompt 4 -->
+        <div class="dark-glass-card p-5 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition group cursor-pointer" onclick="copyPrompt('カンバン方式（ドラッグ＆ドロップ）で動かせる、モダンなTODO管理アプリを作って！')">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 flex items-center gap-1.5">
+              📋 業務・タスク管理
+            </span>
+            <span class="text-xs text-slate-400 group-hover:text-indigo-300 flex items-center gap-1">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> コピー
+            </span>
+          </div>
+          <p class="text-sm font-medium text-white mb-2">
+            「カンバン方式（ドラッグ＆ドロップ）で動かせる、モダンなTODO管理アプリを作って！」
+          </p>
+          <p class="text-xs text-amber-300/80">
+            ✨ 追加の指示: 「タスク完了時に紙吹雪のエフェクトを出して！🎉」「優先度順に並べ替えて！」
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Demo Apps Gallery Section -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="gamepad-2" class="w-6 h-6 text-emerald-400"></i>
+          <h3 class="text-2xl font-bold text-white">すぐに遊べる！作成済みデモアプリ</h3>
+        </div>
+        <span class="text-xs text-slate-400">クリックして直接プレイ・体験</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- App 1: Tokyo Mario Game -->
+        <a href="./tokyo-mario-game/index.html" class="dark-glass-card rounded-2xl p-6 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 group block text-left">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+            <i data-lucide="joystick" class="w-6 h-6"></i>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">東京マリオゲーム</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Action Game</span>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mb-3">
+            東京の名所を舞台にした2D横スクロールアクション！ジャンプしてコインを集めゴールを目指そう。
+          </p>
+          <div class="text-xs text-emerald-400 font-semibold flex items-center gap-1 group-hover:underline">
+            今すぐプレイする <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </a>
+
+        <!-- App 2: AI Quiz -->
+        <a href="./ai-quiz/index.html" class="dark-glass-card rounded-2xl p-6 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 group block text-left">
+          <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+            <i data-lucide="help-circle" class="w-6 h-6"></i>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-lg font-bold text-white group-hover:text-blue-300 transition-colors">AI理解度クイズ</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">Quiz</span>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mb-3">
+            AIの基礎知識や歴史を楽しく学べる4択クイズアプリ。全問正解を目指してチャレンジ！
+          </p>
+          <div class="text-xs text-blue-400 font-semibold flex items-center gap-1 group-hover:underline">
+            クイズに挑戦 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </a>
+
+        <!-- App 3: Wakamono Converter -->
+        <a href="./wakamono-converter/index.html" class="dark-glass-card rounded-2xl p-6 hover:border-pink-500/50 hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 group block text-left">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center mb-4 group-hover:bg-pink-500 group-hover:text-white transition-colors">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-lg font-bold text-white group-hover:text-pink-300 transition-colors">若者言葉変換器</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-pink-500/20 text-pink-300">Converter</span>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mb-3">
+            おじさん構文や標準語の文章を、最新のZ世代・若者言葉に瞬時に自動翻訳！
+          </p>
+          <div class="text-xs text-pink-400 font-semibold flex items-center gap-1 group-hover:underline">
+            言葉を変換する <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </a>
+
+        <!-- App 4: Science Quiz -->
+        <a href="./science-quiz/index.html" class="dark-glass-card rounded-2xl p-6 hover:border-cyan-500/50 hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 group block text-left">
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-4 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+            <i data-lucide="flask-conical" class="w-6 h-6"></i>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">サイエンスクイズ</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300">Science</span>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mb-3">
+            身の回りの科学の不思議や宇宙のトリビアをクイズ形式で解説。理科好き必見！
+          </p>
+          <div class="text-xs text-cyan-400 font-semibold flex items-center gap-1 group-hover:underline">
+            クイズに挑戦 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </a>
+
+        <!-- App 5: Korea Travel Quiz -->
+        <a href="./korea-travel-quiz/index.html" class="dark-glass-card rounded-2xl p-6 hover:border-purple-500/50 hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 group block text-left">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+            <i data-lucide="plane" class="w-6 h-6"></i>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">韓国旅行クイズ</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">Travel</span>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mb-3">
+            韓国のグルメ、観光地、カルチャーに関する楽しいクイズ。旅行気分を味わおう！
+          </p>
+          <div class="text-xs text-purple-400 font-semibold flex items-center gap-1 group-hover:underline">
+            クイズに挑戦 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </a>
+
+        <!-- App 6: Counselor Voice Agent -->
+        <a href="./counselor-voice-agent/README.md" class="dark-glass-card rounded-2xl p-6 hover:border-amber-500/50 hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 group block text-left">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-4 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+            <i data-lucide="mic" class="w-6 h-6"></i>
+          </div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">カウンセラー音声AI</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Realtime Voice</span>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed mb-3">
+            OpenAI Realtime API連携のリアルタイム双方向音声カウンセラー（Node.jsローカル実行用）。
+          </p>
+          <div class="text-xs text-amber-400 font-semibold flex items-center gap-1 group-hover:underline">
+            実行ガイドを見る <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="dark-glass-card rounded-2xl p-6 md:p-8 space-y-4">
+      <div class="flex items-center gap-2 mb-2">
+        <i data-lucide="check-check" class="w-6 h-6 text-blue-400"></i>
+        <h3 class="text-2xl font-bold text-white">一般的なAIチャットと何が違うの？</h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400">
+              <th class="py-3 px-4 font-semibold">特徴</th>
+              <th class="py-3 px-4 font-semibold text-slate-400">通常のチャットAI</th>
+              <th class="py-3 px-4 font-semibold text-blue-300 bg-blue-500/10 rounded-t-lg">🤖 IBM Bob</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-200">
+            <tr>
+              <td class="py-3.5 px-4 font-medium text-slate-300">出力される成果物</td>
+              <td class="py-3.5 px-4 text-slate-400">画面上のコード片（コピペが必要）</td>
+              <td class="py-3.5 px-4 text-emerald-300 font-semibold bg-blue-500/5">実際に動くプロジェクト・ファイル一式</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium text-slate-300">実行とテスト</td>
+              <td class="py-3.5 px-4 text-slate-400">人間が自分で設定して実行</td>
+              <td class="py-3.5 px-4 text-emerald-300 font-semibold bg-blue-500/5">Bobが自律的にコマンド実行＆プレビュー起動</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium text-slate-300">追加の修正</td>
+              <td class="py-3.5 px-4 text-slate-400">部分コードをもらって手動で差し替え</td>
+              <td class="py-3.5 px-4 text-emerald-300 font-semibold bg-blue-500/5">「色を変えて」の一言でファイルに自動反映</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-medium text-slate-300">プロジェクト理解</td>
+              <td class="py-3.5 px-4 text-slate-400">1〜2ファイルのコンテキストが限界</td>
+              <td class="py-3.5 px-4 text-emerald-300 font-semibold bg-blue-500/5">リポジトリ全体を俯瞰して構造を把握</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer Toast for Copy Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-indigo-600 text-white px-4 py-2.5 rounded-lg shadow-xl text-sm font-medium transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+      <i data-lucide="check" class="w-4 h-4"></i> プロンプトをクリップボードにコピーしました！
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800 text-center py-6 text-xs text-slate-500">
+    Made with IBM Bob • 展示会ブース専用デモガイド
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        setTimeout(() => {
+          toast.classList.remove('translate-y-0', 'opacity-100');
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2500);
+      });
+    }
+  </script>
+</body>
+</html>

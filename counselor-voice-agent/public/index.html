@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIカウンセラー — 音声で話せるAI相談室</title>
+  <style>
+    /* ── リセット & 基本 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0f1117;
+      --surface:  #1a1d27;
+      --surface2: #22263a;
+      --border:   #2e3350;
+      --text:     #e8eaf6;
+      --muted:    #8891b8;
+      --accent:   #7c83f5;
+      --accent2:  #5c63d8;
+      --green:    #4caf82;
+      --red:      #e05c5c;
+      --yellow:   #f0c040;
+    }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── レイアウト ── */
+    .app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+
+    /* ── ヘッダー ── */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    header h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+    }
+    header p.subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── 注意文（個人情報） ── */
+    .notice {
+      width: 100%;
+      max-width: 640px;
+      background: #1a1500;
+      border: 1px solid #4a3a00;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--yellow);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* ── ステータスバッジ ── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .dot.connected  { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .dot.connecting { background: var(--yellow); animation: pulse 1s infinite; }
+    .dot.error      { background: var(--red); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── アバター（AIカウンセラー） ── */
+    .avatar-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+    }
+    .avatar-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+    .avatar-ring.speaking {
+      opacity: 1;
+      animation: ring-pulse 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes ring-pulse {
+      from { transform: scale(1); opacity: 0.6; }
+      to   { transform: scale(1.12); opacity: 1; }
+    }
+    .avatar {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2) 0%, #8b5cf6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      user-select: none;
+    }
+
+    /* ── 会話エリア ── */
+    .chat-area {
+      width: 100%;
+      max-width: 640px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 220px;
+      max-height: 340px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+    .chat-placeholder {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+      margin: auto;
+    }
+
+    /* ── メッセージバブル ── */
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .msg.user   { align-items: flex-end; }
+    .msg.agent  { align-items: flex-start; }
+    .msg .label { font-size: 0.72rem; color: var(--muted); padding: 0 6px; }
+    .bubble {
+      max-width: 88%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .msg.user .bubble {
+      background: var(--accent2);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.agent .bubble {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* ── 音声波形インジケーター ── */
+    .wave-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .wave-label { font-size: 0.72rem; color: var(--muted); padding: 0 6px; }
+    .wave-indicator {
+      display: none;
+      align-items: center;
+      gap: 3px;
+      padding: 8px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      border-bottom-left-radius: 4px;
+    }
+    .wave-indicator.active { display: flex; }
+    .wave-indicator .bar {
+      width: 3px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: wave 0.8s ease-in-out infinite;
+    }
+    .wave-indicator .bar:nth-child(2) { animation-delay: 0.1s; }
+    .wave-indicator .bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-indicator .bar:nth-child(4) { animation-delay: 0.3s; }
+    .wave-indicator .bar:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.4); }
+      50%       { transform: scaleY(1); }
+    }
+
+    /* ── ボタン群 ── */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 640px;
+    }
+    .btn-main {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .btn-main:active { transform: scale(0.97); }
+    .btn-main.start {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-main.start:hover { background: var(--accent2); }
+    .btn-main.stop {
+      background: var(--red);
+      color: #fff;
+    }
+    .btn-main.stop:hover { background: #c94848; }
+    .btn-main:disabled {
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── エラーバナー ── */
+    .error-banner {
+      display: none;
+      width: 100%;
+      max-width: 640px;
+      background: #2a0f0f;
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--red);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .error-banner.visible { display: block; }
+
+    /* ── フッター ── */
+    footer {
+      margin-top: 32px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      width: 100%;
+      max-width: 640px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ヘッダー -->
+  <header>
+    <h1>🧘 AIカウンセラー</h1>
+    <p class="subtitle">音声で話せるAI相談室 — デモ体験版</p>
+  </header>
+
+  <!-- 個人情報注意文 -->
+  <div class="notice">
+    ⚠️ 入力した音声はAIサービス（OpenAI）へ送信されます。<br>
+    個人情報・氏名・住所・連絡先などは入力しないでください。
+  </div>
+
+  <!-- 接続ステータス -->
+  <div class="status-bar">
+    <div class="dot" id="statusDot"></div>
+    <span id="statusText">接続待機中</span>
+  </div>
+
+  <!-- アバター -->
+  <div class="avatar-wrap">
+    <div class="avatar-ring" id="avatarRing"></div>
+    <div class="avatar">🧘</div>
+  </div>
+
+  <!-- エラーバナー -->
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- 会話ログ -->
+  <div class="chat-area" id="chatArea">
+    <p class="chat-placeholder" id="chatPlaceholder">会話がここに表示されます</p>
+    <!-- 音声応答中インジケーター -->
+    <div class="wave-wrap" id="waveWrap" style="display:none">
+      <div>
+        <div class="wave-label">カウンセラー</div>
+        <div class="wave-indicator active" id="waveIndicator">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- コントロール -->
+  <div class="controls">
+    <button class="btn-main start" id="btnStart">🎙️ 話しかける（タップして開始）</button>
+    <button class="btn-main stop" id="btnStop" style="display:none">⏹️ 会話を終了する</button>
+    <button class="btn-reset" id="btnReset">🔄 次の来訪者へ（リセット）</button>
+  </div>
+
+</div>
+
+<!-- AIの音声出力用 -->
+<audio id="remoteAudio" autoplay></audio>
+
+<footer>
+  このデモは展示会用のプロトタイプです。会話は保存されません。<br>
+  Made with IBM Bob
+</footer>
+
+<script type="module">
+// ═══════════════════════════════════════════════════
+//  counselor-voice-agent / public / index.html
+//  フロントエンド: WebRTC + サーバープロキシ経由 OpenAI Realtime API
+//
+//  フロー:
+//    1. [開始] → マイク許可取得
+//    2. RTCPeerConnection + SDP offer 作成
+//    3. POST /api/realtime-sdp にSDP offerを送信
+//       → サーバーが OPENAI_API_KEY を付けて OpenAI へ転送
+//       → SDP answer をブラウザへ返す
+//    4. answer をセット → WebRTC 接続確立
+//    5. マイク音声を送信 / AIの音声を <audio> で再生
+//    6. [終了] → 接続をクローズ
+// ═══════════════════════════════════════════════════
+
+const $           = id => document.getElementById(id);
+const chatArea    = $('chatArea');
+const chatPH      = $('chatPlaceholder');
+const waveWrap    = $('waveWrap');
+const btnStart    = $('btnStart');
+const btnStop     = $('btnStop');
+const btnReset    = $('btnReset');
+const statusDot   = $('statusDot');
+const statusTxt   = $('statusText');
+const errBanner   = $('errorBanner');
+const avatarRing  = $('avatarRing');
+const remoteAudio = $('remoteAudio');
+
+let pc          = null; // RTCPeerConnection
+let localStream = null; // マイクストリーム
+let agentSpeaking = false;
+
+// ── ステータス更新 ─────────────────────────────────
+function setStatus(state, text) {
+  statusDot.className = 'dot ' + state;
+  statusTxt.textContent = text;
+}
+
+// ── エラー表示 ─────────────────────────────────────
+function showError(msg) {
+  errBanner.textContent = msg;
+  errBanner.classList.add('visible');
+}
+function clearError() {
+  errBanner.classList.remove('visible');
+}
+
+// ── メッセージ追加 ─────────────────────────────────
+function addMsg(role, text) {
+  if (!text?.trim()) return;
+  chatPH.style.display = 'none';
+
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `
+    <span class="label">${role === 'user' ? 'あなた' : 'カウンセラー'}</span>
+    <div class="bubble">${escHtml(text)}</div>
+  `;
+  // waveWrap の前に挿入
+  chatArea.insertBefore(div, waveWrap);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── AIが話している演出 ─────────────────────────────
+function setAgentSpeaking(yes) {
+  agentSpeaking = yes;
+  waveWrap.style.display = yes ? 'flex' : 'none';
+  avatarRing.classList.toggle('speaking', yes);
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// ── WebRTC 接続開始 ───────────────────────────────
+async function startSession() {
+  clearError();
+  setStatus('connecting', '接続中...');
+  btnStart.disabled = true;
+
+  try {
+    // 1. マイク取得（ユーザー操作後に実行）
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    // 2. RTCPeerConnection 作成
+    pc = new RTCPeerConnection();
+
+    // リモート音声を <audio> にルーティング
+    pc.ontrack = e => {
+      if (remoteAudio.srcObject !== e.streams[0]) {
+        remoteAudio.srcObject = e.streams[0];
+      }
+    };
+
+    // マイクトラックを追加
+    localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+
+    // 3. SDP offer 作成
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    // ICE candidate 収集を待つ（gathercomplete まで）
+    await new Promise(resolve => {
+      if (pc.iceGatheringState === 'complete') { resolve(); return; }
+      pc.addEventListener('icegatheringstatechange', () => {
+        if (pc.iceGatheringState === 'complete') resolve();
+      });
+      // タイムアウト保険（3秒）
+      setTimeout(resolve, 3000);
+    });
+
+    // 4. サーバープロキシ経由でSDP offerを送信（APIキーはサーバー側のみ）
+    const sdpRes = await fetch('/api/realtime-sdp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/sdp' },
+      body: pc.localDescription.sdp,
+    });
+
+    if (!sdpRes.ok) {
+      const errData = await sdpRes.json().catch(() => ({}));
+      throw new Error(errData.message || `サーバーエラー (${sdpRes.status})`);
+    }
+
+    const answerSdp = await sdpRes.text();
+
+    // 5. SDP answer をセット → WebRTC 接続確立
+    await pc.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+
+    setStatus('connected', '接続済み — お気軽にどうぞ');
+    btnStart.style.display = 'none';
+    btnStop.style.display = 'block';
+    setAgentSpeaking(true);
+
+    // 音声再生が始まったら speaking 演出をオフ
+    remoteAudio.addEventListener('ended', () => setAgentSpeaking(false), { once: true });
+
+  } catch (err) {
+    console.error('[startSession]', err);
+    const msg = err.name === 'NotAllowedError'
+      ? 'マイクの使用が許可されていません。ブラウザの設定を確認してください。'
+      : err.name === 'NotFoundError'
+      ? 'マイクが見つかりません。デバイスを確認してください。'
+      : `接続できませんでした: ${err.message}`;
+    showError(msg);
+    setStatus('error', '接続エラー');
+    btnStart.disabled = false;
+    stopSession(false);
+  }
+}
+
+// ── 接続終了 ─────────────────────────────────────
+function stopSession(showMsg = true) {
+  if (pc) { try { pc.close(); } catch {} pc = null; }
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
+  remoteAudio.srcObject = null;
+  setAgentSpeaking(false);
+
+  if (showMsg) {
+    setStatus('', '接続終了');
+    btnStop.style.display = 'none';
+    btnStart.style.display = 'block';
+    btnStart.disabled = false;
+  }
+}
+
+// ── リセット（次の来訪者） ────────────────────────
+function resetAll() {
+  stopSession(false);
+  chatArea.querySelectorAll('.msg').forEach(el => el.remove());
+  chatPH.style.display = '';
+  clearError();
+  setStatus('', '接続待機中');
+  statusDot.className = 'dot';
+  btnStop.style.display = 'none';
+  btnStart.style.display = 'block';
+  btnStart.disabled = false;
+}
+
+// ── イベントバインド ──────────────────────────────
+btnStart.addEventListener('click', startSession);
+btnStop.addEventListener('click', () => stopSession(true));
+btnReset.addEventListener('click', () => {
+  if (confirm('会話をリセットして次の来訪者へ切り替えますか？')) resetAll();
+});
+
+window.addEventListener('beforeunload', () => stopSession(false));
+</script>
+</body>
+</html>
